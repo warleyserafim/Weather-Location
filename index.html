@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+
+    <title>Weather Location</title>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Weather Location</h1>
+        <div class="row">
+            <div class="text-center status">
+                <p>
+                    <span id="city"></span>
+                    <span id="country"></span>
+                </p>
+
+                <p>
+                    <span id="time"></span>
+                </p>
+                <p>
+                    <span id="temp"></span>
+                    <span class="temp" id="tempunit"></span>
+                </p>
+                <p class="desc"></p>
+                <img id="icon" />
+            </div>
+
+        </div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+    <script>
+
+        (async () => {
+            const response = await axios.get('https://ipapi.co/json/');
+            const { data } = response;
+            console.log(data);
+            let latitude = data.latitude;
+            let longitude = data.longitude;
+
+
+            const weather = await getWheather(latitude, longitude);
+            console.log(weather.data);
+
+            
+
+            let myCity = document.getElementById('city');
+            myCity.innerHTML = weather.data.name + ', ';
+
+            let myCountry = document.getElementById('country');
+            myCountry.innerHTML = weather.data.sys.country;
+
+            let myTemp = document.getElementById('temp');
+            myTemp.innerHTML = weather.data.main.temp + ' °C';
+
+
+            let myDesc = document.getElementsByClassName('desc')[0];
+            myDesc.innerHTML = weather.data.weather[0].main;
+
+            IconGen(weather.data.weather[0]);
+
+            
+
+            if (myDesc.innerHTML == 'Clear') {
+                document.body.style.backgroundImage = "url('https://www.centroespiritauniao.com.br/wp-content/uploads/2014/07/ceu-azul-1024x727.jpg')";
+                document.body.style.backgroundSize = "cover";
+            } else if (myDesc.innerHTML == 'Clouds') {
+                document.body.style.backgroundImage = "url('https://cdn.pixabay.com/photo/2020/04/23/05/32/grey-5081135_960_720.jpg')";
+                document.body.style.backgroundSize = "cover";
+            } else if (myDesc.innerHTML == 'Rain') {
+                document.body.style.backgroundImage = "url('https://canalciencia.ibict.br/images/noticias/raio.jpg')";
+                document.body.style.backgroundSize = "cover";
+            } else if (myDesc.innerHTML == 'Snow') {
+                document.body.style.backgroundImage = "url('https://super.abril.com.br/wp-content/uploads/2020/08/18-08_neveSP_SITE.jpg')";
+                document.body.style.backgroundSize = "cover";
+            } else if (myDesc.innerHTML == 'Mist') {
+                document.body.style.backgroundImage = "url('https://garagem360.com.br/wp-content/uploads/2016/08/13981938640_7bd6b10a6d_c.jpg')";
+                document.body.style.backgroundSize = "cover";
+            } else if (myDesc.innerHTML == 'thunderstom') {
+                document.body.style.backgroundImage = "url('https://portalrondon.com.br/wp-content/uploads/2021/01/chuva.jpg')";
+                document.body.style.backgroundSize = "cover";
+            }
+
+
+            showTime();
+
+            
+        }
+        )();
+
+        function getWheather(lat, lon) {
+            return axios.get(`https://weather-proxy.freecodecamp.rocks/api/current?lat=${lat}&lon=${lon}`);
+        }
+
+        function IconGen(desc) {
+            let icon = document.getElementById('icon');
+            // let img = document.createElement('img');
+            icon.src = desc.icon;
+            // icon.appendChild(img);
+
+        }
+
+
+        setInterval(showTime, 1000);
+        function showTime() {
+            let date = new Date();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            am_pm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            let time = hours + ':' + minutes + ':' + seconds + ' ' + am_pm;
+            document.getElementById('time').innerHTML = time;
+        }
+    </script>
+</body>
+    
+
+</html>
